@@ -14,6 +14,11 @@ Chrome extension (Manifest V3, vanilla JS, no build step) that shrinks selected 
 - Open settings by clicking the toolbar icon.
 - Google Docs is not supported: it renders text on a canvas, so the extension can't read or replace it.
 
+## Recommendation badge
+On chatgpt.com, claude.ai and gemini.google.com, highlighting text (15+ characters) shows a badge with the token estimate, possible local savings, and a suggested model for that platform. Nothing changes until you press the shortcut. After compressing, the toast lists a suggestion for Claude, ChatGPT and Gemini. These are the only sites with an always-on content script; everywhere else the extension injects only when you trigger it.
+
+Model lists live in `models.json` (one list per platform, mapped to fast/balanced/strong/frontier tiers, with the plan needed). Edit it when models change.
+
 ## Modes
 - **Local rules** (default): offline, strips filler/politeness, collapses whitespace and duplicate lines; code, inline code, URLs and quoted strings are left untouched.
 - **Claude Haiku API** (optional): rewrites with Haiku; falls back to local rules on any error. Optional exact token counts via `count_tokens`.

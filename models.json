@@ -1,9 +1,39 @@
 {
+  "_note": "Edit freely. Tiers: fast < balanced < strong < frontier. A platform with no model at a tier falls back to the nearest one. 'plan' is shown next to the model name when set.",
   "llmCompressionModel": "claude-haiku-4-5-20251001",
-  "models": [
-    { "id": "claude-haiku-4-5-20251001", "name": "Claude Haiku 4.5", "tier": "fast", "bestFor": "short, simple, high-volume tasks" },
-    { "id": "claude-sonnet-5-5", "name": "Claude Sonnet 5.5", "tier": "balanced", "bestFor": "everyday coding, writing and analysis" },
-    { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "tier": "strong", "bestFor": "complex multi-step reasoning and large codebases" },
-    { "id": "claude-fable-5-1", "name": "Claude Fable 5.1", "tier": "frontier", "bestFor": "the hardest, most open-ended problems" }
+  "platforms": [
+    {
+      "id": "claude",
+      "name": "Claude",
+      "hosts": ["claude.ai"],
+      "models": [
+        { "id": "claude-haiku-4-5-20251001", "name": "Claude Haiku 4.5", "tier": "fast", "bestFor": "short, simple, high-volume tasks" },
+        { "id": "claude-sonnet-5-5", "name": "Claude Sonnet 5.5", "tier": "balanced", "bestFor": "everyday coding, writing and analysis" },
+        { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "tier": "strong", "bestFor": "complex multi-step reasoning and large codebases" },
+        { "id": "claude-fable-5-1", "name": "Claude Fable 5.1", "tier": "frontier", "bestFor": "the hardest, most open-ended problems" }
+      ]
+    },
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "hosts": ["chatgpt.com", "chat.openai.com"],
+      "models": [
+        { "id": "gpt-5.6-luna-instant", "name": "GPT-5.6 Luna (Instant)", "tier": "fast", "plan": "Free", "bestFor": "short, simple tasks" },
+        { "id": "gpt-5.6-sol-medium", "name": "GPT-5.6 Sol (Medium)", "tier": "balanced", "plan": "Pro", "bestFor": "everyday writing and coding" },
+        { "id": "gpt-5.6-sol-pro", "name": "GPT-5.6 Sol Pro", "tier": "strong", "plan": "Pro", "bestFor": "complex multi-step reasoning" },
+        { "id": "gpt-6-pro-astra", "name": "GPT-6 Pro (Astra)", "tier": "frontier", "plan": "Pro", "bestFor": "the hardest problems" }
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "hosts": ["gemini.google.com"],
+      "models": [
+        { "id": "gemini-3.5-flash-lite", "name": "Gemini 3.5 Flash-Lite", "tier": "fast", "plan": "Free", "bestFor": "short, simple tasks" },
+        { "id": "gemini-3.6-flash", "name": "Gemini 3.6 Flash", "tier": "balanced", "plan": "Free", "bestFor": "everyday writing and coding" },
+        { "id": "gemini-3.5-pro", "name": "Gemini 3.5 Pro", "tier": "strong", "plan": "AI Pro", "bestFor": "complex reasoning, 1M-token context" },
+        { "id": "gemini-deep-think", "name": "Gemini Deep Think", "tier": "frontier", "plan": "AI Ultra", "bestFor": "the hardest reasoning problems" }
+      ]
+    }
   ]
 }

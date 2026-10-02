@@ -6,6 +6,18 @@
   "permissions": ["contextMenus", "storage", "activeTab", "scripting"],
   "host_permissions": ["https://api.anthropic.com/*"],
   "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": ["content.js", "badge.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "action": { "default_title": "Prompt Compressor settings" },
   "commands": {
     "compress-selection": {

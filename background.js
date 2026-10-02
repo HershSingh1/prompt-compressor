@@ -1,7 +1,7 @@
 import { compressLocal } from './src/compress-local.js';
 import { compressWithHaiku } from './src/compress-llm.js';
 import { estimateTokens, countTokensApi } from './src/tokens.js';
-import { recommend } from './src/recommend.js';
+import { recommend, modelLabel } from './src/recommend.js';
 import { getSettings } from './src/settings.js';
 
 const MENU_ID = 'pc-compress';
@@ -30,6 +30,23 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
 });
 
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
+
+// Highlight badge on the AI sites asks for a recommendation; nothing is stored or logged.
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type !== 'peek' || typeof msg.text !== 'string') return;
+  (async () => {
+    const { platforms } = await loadModels();
+    const tokens = estimateTokens(msg.text);
+    const recs = recommend(msg.text, tokens, platforms);
+    const host = new URL(sender.url).hostname;
+    const rec = recs.find((r) => r.hosts.includes(host)) ?? recs[0];
+    const saved = tokens - estimateTokens(compressLocal(msg.text));
+    const commands = await chrome.commands.getAll();
+    const shortcut = commands.find((c) => c.name === 'compress-selection')?.shortcut ?? '';
+    sendResponse({ tokens, saved, rec, label: modelLabel(rec.model), shortcut });
+  })();
+  return true;
+});
 
 function inFrame(tabId, frameId, func, args = []) {
   return chrome.scripting.executeScript({ target: { tabId, frameIds: [frameId] }, func, args });
@@ -69,11 +86,11 @@ async function run(tabId) {
     const saved = outcome.beforeTokens - outcome.afterTokens;
     const pct = Math.round((saved / outcome.beforeTokens) * 100);
     const approx = outcome.exact ? '' : '~';
-    const { models } = await loadModels();
-    const rec = recommend(outcome.output, outcome.afterTokens, models);
+    const { platforms } = await loadModels();
+    const recs = recommend(outcome.output, outcome.afterTokens, platforms);
     const lines = [
       `Saved ${approx}${saved} tokens (${pct}%): ${approx}${outcome.beforeTokens} → ${approx}${outcome.afterTokens}`,
-      `Suggested model: ${rec.model.name} (${rec.reason})`,
+      `Suggested: ${recs.map((r) => `${r.platform} → ${modelLabel(r.model)}`).join(' · ')} (${recs[0].reason})`,
       ...outcome.notes,
     ];
 
