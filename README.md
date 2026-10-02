@@ -10,7 +10,9 @@ Chrome extension (Manifest V3, vanilla JS, no build step) that shrinks selected 
 - Select text (or click into a field to compress all of it), then press **Alt+Shift+C** or right-click → **Compress prompt**.
 - Works in `<textarea>`, `<input>` (text-like types) and `contenteditable`. Replacement goes through the browser's edit pipeline, so Ctrl+Z restores the original.
 - On read-only page text, the compressed version is shown in a toast with a Copy button.
-- Remap the shortcut at `chrome://extensions/shortcuts`; open settings by clicking the toolbar icon.
+- Chrome may not assign the suggested Alt+Shift+C (it skips shortcuts that conflict). If nothing happens, open `chrome://extensions/shortcuts`, find **Compress the selected prompt text**, and set it yourself. The right-click menu works without a shortcut.
+- Open settings by clicking the toolbar icon.
+- Google Docs is not supported: it renders text on a canvas, so the extension can't read or replace it.
 
 ## Modes
 - **Local rules** (default): offline, strips filler/politeness, collapses whitespace and duplicate lines; code, inline code, URLs and quoted strings are left untouched.
