@@ -1,6 +1,7 @@
 // Settings live in chrome.storage.local only (API key included).
 
-const DEFAULTS = { mode: 'local', apiKey: '', exactCount: false };
+// level: 'standard' keeps meaning; 'aggressive' also drops hedges and swaps stronger words.
+const DEFAULTS = { mode: 'local', level: 'standard', apiKey: '', exactCount: false };
 
 export async function getSettings() {
   return { ...DEFAULTS, ...(await chrome.storage.local.get(DEFAULTS)) };

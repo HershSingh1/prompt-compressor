@@ -1,4 +1,5 @@
-// Local rule-based compressor. Pure function, no I/O.
+// Local rule-based compressor. Pure function, no I/O. Rules live in rules.js.
+import { getRules, isSeparatorLine } from './rules.js';
 
 const PH_OPEN = '';
 const PH_CLOSE = '';
@@ -13,26 +14,7 @@ const PROTECTED = [
   /“[^”\n]*”/g,
 ];
 
-const RULES = [
-  [/^(hi|hello|hey)( there)?\b[,!.]?\s*/i, ''],
-  [/(^|[.!?]\s+)(could|can|would|will) you (please |kindly )?/gi, '$1'],
-  [/\bplease,?\s*/gi, ''],
-  [/\bkindly\s+/gi, ''],
-  [/\bI (would like|want|need) you to\s+/gi, ''],
-  [/\bI was wondering if you could\s+/gi, ''],
-  [/\bit is important to note that\s+/gi, ''],
-  [/\bin order to\b/gi, 'to'],
-  [/\bdue to the fact that\b/gi, 'because'],
-  [/\bat this point in time\b/gi, 'now'],
-  [/\ba number of\b/gi, 'several'],
-  [/\bmake sure that\b/gi, 'ensure'],
-  [/\bis able to\b/gi, 'can'],
-  [/\bwith regard to\b/gi, 'about'],
-  [/\bin the event that\b/gi, 'if'],
-  [/\bfor the purpose of\b/gi, 'for'],
-  [/\b(basically|essentially|literally|actually|really|simply|very)\s+/gi, ''],
-  [/\s*\b(thanks|thank you)( so much| very much| in advance)?[.!]*\s*$/gi, ''],
-];
+const MAX_PASSES = 3;
 
 function protect(text) {
   const spans = [];
@@ -57,22 +39,46 @@ function restore(text, spans) {
   return out;
 }
 
-function compressLine(line) {
+function compressLine(line, rules) {
   const indent = line.match(/^\s*/)[0];
   let body = line.slice(indent.length);
   const wasUpper = /^[A-Z]/.test(body);
-  for (const [re, rep] of RULES) body = body.replace(re, rep);
+  // Deleting one phrase can expose another at a sentence start, so repeat until stable.
+  for (let pass = 0; pass < MAX_PASSES; pass++) {
+    const before = body;
+    for (const { re, to } of rules) body = body.replace(re, to);
+    if (body === before) break;
+  }
   body = body
     .replace(/[ \t]{2,}/g, ' ')
     .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/([,;:])(?=[,;:])/g, '')
     .trimEnd();
   if (wasUpper && /^[a-z]/.test(body)) body = body[0].toUpperCase() + body.slice(1);
   return body ? indent + body : '';
 }
 
-export function compressLocal(input) {
+// Drop a sentence that repeats an earlier one verbatim (ignoring case); short ones are kept.
+function dedupeSentences(lines) {
+  const seen = new Set();
+  return lines.map((line) => {
+    const parts = line.split(/(?<=[.!?])\s+/);
+    const kept = parts.filter((s) => {
+      const key = s.trim().toLowerCase();
+      if (key.length < 25) return true;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return kept.join(' ');
+  });
+}
+
+export function compressLocal(input, { level = 'standard' } = {}) {
+  const rules = getRules(level);
   const { out, spans } = protect(input.replace(/\r\n?/g, '\n'));
-  const lines = out.split('\n').map(compressLine);
+  const body = out.split('\n').filter((l) => !isSeparatorLine(l));
+  const lines = dedupeSentences(body.map((l) => compressLine(l, rules)));
   const deduped = lines.filter((l, i) => !(l && l === lines[i - 1]));
   const joined = deduped.join('\n').replace(/\n{3,}/g, '\n\n').trim();
   return restore(joined, spans);

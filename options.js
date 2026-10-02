@@ -6,12 +6,14 @@ const status = (msg) => { $('status').textContent = msg; };
 
 const settings = await getSettings();
 document.querySelector(`input[name="mode"][value="${settings.mode}"]`).checked = true;
+document.querySelector(`input[name="level"][value="${settings.level}"]`).checked = true;
 $('apiKey').value = settings.apiKey;
 $('exactCount').checked = settings.exactCount;
 
 $('save').onclick = async () => {
   await setSettings({
     mode: document.querySelector('input[name="mode"]:checked').value,
+    level: document.querySelector('input[name="level"]:checked').value,
     apiKey: $('apiKey').value.trim(),
     exactCount: $('exactCount').checked,
   });

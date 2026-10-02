@@ -26,6 +26,14 @@
   </div>
   <small>LLM mode sends your selected text to api.anthropic.com. Local mode never leaves the browser.</small>
 
+  <h2>Local rule strength</h2>
+  <div class="row">
+    <label><input type="radio" name="level" value="standard"> Standard (keeps meaning)</label>
+    <label><input type="radio" name="level" value="aggressive"> Aggressive</label>
+  </div>
+  <small>Aggressive also drops hedges ("maybe", "I think", "if possible"), swaps "very big" for "huge", and shortens units and dates.
+  It saves more but can shift nuance, so re-read the result.</small>
+
   <label for="apiKey">Anthropic API key</label>
   <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-...">
   <small>Stored in chrome.storage.local on this device only.</small>

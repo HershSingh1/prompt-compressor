@@ -40,7 +40,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     const recs = recommend(msg.text, tokens, platforms);
     const host = new URL(sender.url).hostname;
     const rec = recs.find((r) => r.hosts.includes(host)) ?? recs[0];
-    const saved = tokens - estimateTokens(compressLocal(msg.text));
+    const { level } = await getSettings();
+    const saved = tokens - estimateTokens(compressLocal(msg.text, { level }));
     const commands = await chrome.commands.getAll();
     const shortcut = commands.find((c) => c.name === 'compress-selection')?.shortcut ?? '';
     sendResponse({ tokens, saved, rec, label: modelLabel(rec.model), shortcut });
@@ -114,7 +115,7 @@ async function compress(text) {
   const { llmCompressionModel } = await loadModels();
   const notes = [];
   const beforeEstimate = estimateTokens(text);
-  let output = compressLocal(text);
+  let output = compressLocal(text, { level: settings.level });
 
   if (settings.mode === 'llm') {
     if (!settings.apiKey) {

@@ -20,7 +20,9 @@ On chatgpt.com, claude.ai and gemini.google.com, highlighting text (15+ characte
 Model lists live in `models.json` (one list per platform, mapped to fast/balanced/strong/frontier tiers, with the plan needed). Edit it when models change.
 
 ## Modes
-- **Local rules** (default): offline, strips filler/politeness, collapses whitespace and duplicate lines; code, inline code, URLs and quoted strings are left untouched.
+- **Local rules** (default): offline, driven by `src/rules.js` (built from `prompt_token_efficiency_list.txt`). Removes politeness and filler, swaps wordy phrases for short ones ("in order to" -> "to"), shortens instruction phrases and adds labels ("The tone should be" -> "Tone:"), collapses redundant pairs, numbers and ranges, whitespace, separators and repeated sentences. Code, inline code, URLs and quoted strings are left untouched, and negations, quantifiers, conditionals, modals and numbers are never removed.
+  - **Standard** (default): meaning-preserving rules only.
+  - **Aggressive** (settings page): also drops hedges ("maybe", "I think", "if possible"), swaps "very big" for "huge", and abbreviates units and dates. Saves more but can shift nuance, so re-read the result.
 - **Claude Haiku API** (optional): rewrites with Haiku; falls back to local rules on any error. Optional exact token counts via `count_tokens`.
 
 ## Privacy
