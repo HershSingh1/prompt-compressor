@@ -1,0 +1,9 @@
+{
+  "llmCompressionModel": "claude-haiku-4-5-20251001",
+  "models": [
+    { "id": "claude-haiku-4-5-20251001", "name": "Claude Haiku 4.5", "tier": "fast", "bestFor": "short, simple, high-volume tasks" },
+    { "id": "claude-sonnet-5-5", "name": "Claude Sonnet 5.5", "tier": "balanced", "bestFor": "everyday coding, writing and analysis" },
+    { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "tier": "strong", "bestFor": "complex multi-step reasoning and large codebases" },
+    { "id": "claude-fable-5-1", "name": "Claude Fable 5.1", "tier": "frontier", "bestFor": "the hardest, most open-ended problems" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Compressor",
+  "version": "0.1.0",
+  "description": "Shrink selected prompt text to fewer tokens and get a Claude model recommendation.",
+  "permissions": ["contextMenus", "storage", "activeTab", "scripting"],
+  "host_permissions": ["https://api.anthropic.com/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "Prompt Compressor settings" },
+  "commands": {
+    "compress-selection": {
+      "suggested_key": { "default": "Alt+Shift+C" },
+      "description": "Compress the selected prompt text"
+    }
+  },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+}

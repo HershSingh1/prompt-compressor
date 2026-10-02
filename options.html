@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Prompt Compressor settings</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    body { font: 14px/1.5 system-ui, sans-serif; max-width: 520px; margin: 32px auto; padding: 0 16px; }
+    label { display: block; margin: 12px 0 4px; }
+    input[type="password"] { width: 100%; box-sizing: border-box; padding: 6px; }
+    .row label { display: inline; margin-right: 16px; }
+    button { margin: 16px 8px 0 0; padding: 6px 12px; }
+    #status { margin-top: 12px; min-height: 1.5em; }
+    small { opacity: .75; }
+  </style>
+</head>
+<body>
+  <h1>Prompt Compressor</h1>
+  <p>Select text (or click into a field) and press <b>Alt+Shift+C</b> or right-click → <i>Compress prompt</i>.
+     Change the shortcut at <code>chrome://extensions/shortcuts</code>.</p>
+
+  <h2>Mode</h2>
+  <div class="row">
+    <label><input type="radio" name="mode" value="local"> Local rules (offline)</label>
+    <label><input type="radio" name="mode" value="llm"> Claude Haiku API</label>
+  </div>
+  <small>LLM mode sends your selected text to api.anthropic.com. Local mode never leaves the browser.</small>
+
+  <label for="apiKey">Anthropic API key</label>
+  <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-...">
+  <small>Stored in chrome.storage.local on this device only.</small>
+
+  <label><input id="exactCount" type="checkbox"> Use exact token counts from the API (otherwise estimates)</label>
+
+  <button id="save">Save</button><button id="test">Test connection</button>
+  <div id="status" role="status"></div>
+  <script type="module" src="options.js"></script>
+</body>
+</html>
