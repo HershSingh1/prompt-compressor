@@ -1,5 +1,8 @@
 // Local rule-based compressor. Pure function, no I/O. Rules live in rules.js.
 import { getRules, isSeparatorLine } from './rules.js';
+import { compactJson, compactJsonIn } from './json-compact.js';
+import { dedupeParagraphs } from './dedupe.js';
+import { condense } from './extractive.js';
 
 const PH_OPEN = '';
 const PH_CLOSE = '';
@@ -74,12 +77,20 @@ function dedupeSentences(lines) {
   });
 }
 
-export function compressLocal(input, { level = 'standard' } = {}) {
+// condenseRatio: 0 = off; e.g. 0.7 keeps about 70% of long prose (lossy, opt-in).
+export function compressLocal(input, { level = 'standard', condenseRatio = 0 } = {}) {
   const rules = getRules(level);
-  const { out, spans } = protect(input.replace(/\r\n?/g, '\n'));
+  const text = input.replace(/\r\n?/g, '\n');
+  // Input that is entirely JSON is compacted as data; the prose rules would only risk corrupting it.
+  const wholeJson = compactJson(text, { level });
+  if (wholeJson !== null) return wholeJson.length < text.trim().length ? wholeJson : text.trim();
+  // JSON inside fenced blocks is compacted first; the block is then protected like any code.
+  const { out: protectedText, spans } = protect(compactJsonIn(text, { level }));
+  const out = dedupeParagraphs(protectedText); // after protect so blank lines inside code never split a block
   const body = out.split('\n').filter((l) => !isSeparatorLine(l));
   const lines = dedupeSentences(body.map((l) => compressLine(l, rules)));
   const deduped = lines.filter((l, i) => !(l && l === lines[i - 1]));
   const joined = deduped.join('\n').replace(/\n{3,}/g, '\n\n').trim();
-  return restore(joined, spans);
+  const condensed = condense(joined, condenseRatio, { isProtected: (s) => s.includes(PH_OPEN) });
+  return restore(condensed, spans);
 }

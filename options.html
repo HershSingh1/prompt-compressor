@@ -34,6 +34,14 @@
   <small>Aggressive also drops hedges ("maybe", "I think", "if possible"), swaps "very big" for "huge", and shortens units and dates.
   It saves more but can shift nuance, so re-read the result.</small>
 
+  <h2>Condense long text</h2>
+  <select id="condense">
+    <option value="0">Off (default)</option>
+    <option value="0.8">Light: keep about 80% of long prose</option>
+    <option value="0.6">Medium: keep about 60%</option>
+  </select>
+  <small>Drops the least informative sentences from prose of 600+ characters. Lists, headings, numbers, conditions, negations and code are kept, but this is lossy: re-read the result.</small>
+
   <label for="apiKey">Anthropic API key</label>
   <input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-...">
   <small>Stored in chrome.storage.local on this device only.</small>

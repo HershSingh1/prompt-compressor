@@ -25,6 +25,13 @@ Model lists live in `models.json` (one list per platform, mapped to fast/balance
   - **Aggressive** (settings page): also drops hedges ("maybe", "I think", "if possible"), swaps "very big" for "huge", and abbreviates units and dates. Saves more but can shift nuance, so re-read the result.
 - **Claude Haiku API** (optional): rewrites with Haiku; falls back to local rules on any error. Optional exact token counts via `count_tokens`.
 
+### Added from other token-reduction projects
+Ideas reimplemented from scratch (no code copied); all three upstream projects are MIT-licensed.
+- **JSON compaction** (from [ZON-Format/zon-TS](https://github.com/ZON-Format/zon-TS)): JSON in a prompt, either the whole selection or a fenced block, is minified. Aggressive also rewrites arrays of uniform flat objects as a header plus value rows (), quoting any cell that could be misread. Output is our own plain format, not ZON. Invalid JSON is left alone.
+- **Duplicate paragraph removal** (from [Emmimal/prompt-pruning-layer](https://github.com/Emmimal/prompt-pruning-layer)): a paragraph of 40+ characters that repeats an earlier one (ignoring case and spacing) is dropped. The upstream's expired-tool-output and REF/DEFINE passes need structured chat messages, so they are not included.
+- **Condense long text** (from [Huzaifa785/context-compressor](https://github.com/Huzaifa785/context-compressor)): opt-in on the settings page. For prose of 600+ characters, keeps the highest-scoring sentences (TF-IDF plus position and length bias) in original order. Lists, headings, code, numbers, negations and conditionals are always kept. Lossy, so re-read the result.
+- Not used: [jfrog/boost](https://github.com/jfrog/boost). It filters shell-command output rather than prompt text, and its license is All Rights Reserved.
+
 ## Privacy
 - Only network host: `api.anthropic.com`, and only in LLM mode / exact-count / test connection.
 - API key lives in `chrome.storage.local` only. User text is never logged.
